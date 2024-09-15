@@ -1,6 +1,6 @@
 CREATE OR REPLACE FUNCTION
-  yaml_to_json_wasm(yaml_string STRING)
-  RETURNS STRING NOT NULL
+  yaml_to_json_string(yaml_string VARCHAR)
+  RETURNS VARCHAR
   LANGUAGE JAVASCRIPT
   RETURNS NULL ON NULL INPUT
   IMMUTABLE
@@ -18,5 +18,5 @@ if (typeof(Module) === "undefined") {
   setup(Module);
 }
 
-return Module.yaml_to_json(YAML_STRING);
+return Module.yaml_to_json_string(YAML_STRING);
 $$;

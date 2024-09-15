@@ -1,12 +1,14 @@
-all: dist/yaml_to_json.sql
+all: dist/yaml_to_json_array.sql dist/yaml_to_json_string.sql
 
 EXPORTED_FUNCTIONS = _string_create,_string_delete,_string_data,_string_length,_transform
 
-EXPORTED_RUNTIME_METHODS = stringToUTF8,UTF8ToString,lengthBytesUTF8
+EXPORTED_RUNTIME_METHODS = stringToUTF8,UTF8ToString,lengthBytesUTF8,HEAPU8
+
+CXX_HEADERS = src/string.hpp src/utf8.hpp src/ryml_all.hpp
 
 CXX_SOURCES = src/yaml_to_json.cpp src/ryaml.cpp
 
-dist/yaml_to_json.js: src/wasm_helpers.js ${CXX_SOURCES}
+dist/yaml_to_json.js: src/wasm_helpers.js ${CXX_SOURCES} ${CXX_HEADERS}
 	em++ -Oz -flto --no-entry \
 		-DNDEBUG \
 		-s STRICT \
@@ -20,7 +22,10 @@ dist/yaml_to_json.js: src/wasm_helpers.js ${CXX_SOURCES}
 dist/yaml_to_json.txt: dist/yaml_to_json.wasm
 	base64 -i $< -o $@
 
-dist/yaml_to_json.sql: src/template.sql src/base64.js dist/yaml_to_json.js
+dist/yaml_to_json_array.sql: src/template/binary.sql src/base64.js dist/yaml_to_json.js
+	python src/replace.py $< "@@BASE64_DECODER@@" src/base64.js "@@EMSCRIPTEN_OUTPUT@@" dist/yaml_to_json.js > $@
+
+dist/yaml_to_json_string.sql: src/template/varchar.sql src/base64.js dist/yaml_to_json.js
 	python src/replace.py $< "@@BASE64_DECODER@@" src/base64.js "@@EMSCRIPTEN_OUTPUT@@" dist/yaml_to_json.js > $@
 
 .PHONY: clean

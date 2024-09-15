@@ -1,5 +1,6 @@
 #include "ryml_all.hpp"
 #include "string.hpp"
+#include "utf8.hpp"
 
 extern "C"
 {
@@ -45,7 +46,12 @@ extern "C"
         ryml::Tree tree = ryml::parse_in_place(s);
 
         // emit JSON
-        auto json = ryml::emitrs_json<std::string>(tree);
+        std::string json = ryml::emitrs_json<std::string>(tree);
+
+        // check if string is valid UTF-8
+        if (!utf8::is_valid(json.data())) {
+            return nullptr;
+        }
 
         // construct result
         String* out_str = new String(json.size());

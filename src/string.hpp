@@ -8,6 +8,7 @@ struct String
     String(std::size_t length)
     {
         _chars = new char[length + 1];
+        _chars[length] = 0;
         _length = length;
     }
 

@@ -4,7 +4,7 @@ const Module = require('./dist/yaml_to_json.js');
 console.log(atob('w6FydsOtenTFsXLFkSB0w7xrw7ZyZsO6csOzZ8OpcA=='));
 
 // a simple YAML string
-console.log(Module.yaml_to_json('{foo: 1, bar: [2, 3], john: doe}'));
+console.log(Module.yaml_to_json_string('{foo: 1, bar: [2, 3], john: doe}'));
 
 // a complex YAML string
 const yaml = `
@@ -20,7 +20,8 @@ and this as well: "\u2705 \U0001D11E"
 not decoded: '\u263A \xE2\x98\xBA'
 neither this: '\u2705 \U0001D11E'
 `;
-console.log(Module.yaml_to_json(yaml));
+console.log(Module.yaml_to_json_string(yaml));
+console.log(new TextDecoder("utf-8").decode(Module.yaml_to_json_array(new TextEncoder("utf-8").encode(yaml))));
 
 // a complex YAML string with the document start marker and non-specific tags (!ruby)
 const y = `--- !ruby/hash:ActiveSupport::HashWithIndifferentAccess
@@ -70,4 +71,5 @@ answers:
 text_after_answers: ''
 assessment_question_id:
 `;
-console.log(Module.yaml_to_json(y));
+console.log(Module.yaml_to_json_string(y));
+console.log(new TextDecoder("utf-8").decode(Module.yaml_to_json_array(new TextEncoder("utf-8").encode(y))));
