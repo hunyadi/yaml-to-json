@@ -8,7 +8,7 @@ console.log(atob('w6FydsOtenTFsXLFkSB0w7xrw7ZyZsO6csOzZ8OpcA=='));
 console.log(yaml_to_json_string('{foo: 1, bar: [2, 3], john: doe}'));
 
 // a complex YAML string
-const yaml = `
+const yaml = String.raw`
 en: Planet (Gas)
 fr: Planète (Gazeuse)
 ru: Планета (Газ)

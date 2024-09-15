@@ -1,3 +1,4 @@
+.PHONY: all
 all: dist/yaml_to_json_array.sql dist/yaml_to_json_string.sql
 
 EXPORTED_FUNCTIONS = _string_create,_string_delete,_string_data,_string_length,_transform
