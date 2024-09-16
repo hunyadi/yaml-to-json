@@ -24,3 +24,6 @@ function atob(base64) {
     let arr = new Uint8Array(bytes.buffer, 0, m);
     return Array.from(arr).map((c) => String.fromCharCode(c)).join('');
 }
+if (typeof module != "undefined") {
+    module["exports"] = { "atob": atob };
+}

@@ -38,7 +38,7 @@ extern "C"
         char* s = in_str->data();
 
         // skip start of document marker
-        if (s[0] == '-' && s[1] == '-' && s[2] == '-') {
+        if (in_str->size() > 3 && s[0] == '-' && s[1] == '-' && s[2] == '-') {
             s += 3;
         }
 

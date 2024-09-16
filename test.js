@@ -1,8 +1,16 @@
 const { yaml_to_json_array } = require('./dist/yaml_to_json_array.js');
 const { yaml_to_json_string } = require('./dist/yaml_to_json_string.js');
+const { atob } = require('./src/base64.js')
 
 // "árvíztűrő türökfúrógép" stored as UTF-8, prints with multi-byte characters
-console.log(atob('w6FydsOtenTFsXLFkSB0w7xrw7ZyZsO6csOzZ8OpcA=='));
+console.log(
+  new TextDecoder("utf-8").decode(
+    Uint8Array.from(
+      atob('w6FydsOtenTFsXLFkSB0w7xrw7ZyZsO6csOzZ8OpcA=='),
+      c => c.charCodeAt(0)
+    )
+  )
+);
 
 // a simple YAML string
 console.log(yaml_to_json_string('{foo: 1, bar: [2, 3], john: doe}'));
