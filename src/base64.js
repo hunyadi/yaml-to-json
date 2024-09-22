@@ -3,6 +3,8 @@ const strLookup = Object.fromEntries(
 );
 strLookup['='] = 0;
 function atob(base64) {
+    "use strict";
+
     base64 = base64.replace(/=/g, '');
     let n = base64.length;
     let rem = n % 4;

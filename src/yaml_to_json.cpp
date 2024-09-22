@@ -49,7 +49,7 @@ extern "C"
         std::string json = ryml::emitrs_json<std::string>(tree);
 
         // check if string is valid UTF-8
-        if (!utf8::is_valid(json.data())) {
+        if (!utf8::is_valid(json)) {
             return nullptr;
         }
 

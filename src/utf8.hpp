@@ -12,7 +12,7 @@ namespace utf8
 {
     namespace detail
     {
-        static constexpr std::uint8_t utf8d[] = {
+        inline static constexpr std::uint8_t utf8d[] = {
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 00..1f
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 20..3f
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, // 40..5f
@@ -64,6 +64,15 @@ namespace utf8
         }
 
         return state == 0;  // true if the string has been well-formed
+    }
+
+    /**
+     * Checks if a UTF-8 string is valid.
+     * @returns True if the string is valid UTF-8.
+     */
+    inline bool is_valid(const std::string& s)
+    {
+        return is_valid(s.data());
     }
 
     /**
