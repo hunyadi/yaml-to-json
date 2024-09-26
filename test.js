@@ -15,6 +15,9 @@ console.log(
 // a simple YAML string
 console.log(yaml_to_json_string('{foo: 1, bar: [2, 3], john: doe}'));
 
+// an invalid YAML string
+console.log(yaml_to_json_string('{}0'));
+
 // a complex YAML string
 const yaml = String.raw`
 en: Planet (Gas)

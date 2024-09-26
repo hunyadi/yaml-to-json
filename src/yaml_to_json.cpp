@@ -42,11 +42,16 @@ extern "C"
             s += 3;
         }
 
-        // parse YAML
-        ryml::Tree tree = ryml::parse_in_place(s);
+        std::string json;
+        try {
+            // parse YAML
+            ryml::Tree tree = ryml::parse_in_place(s);
 
-        // emit JSON
-        std::string json = ryml::emitrs_json<std::string>(tree);
+            // emit JSON
+            json = ryml::emitrs_json<std::string>(tree);
+        } catch (std::runtime_error&) {
+            return nullptr;
+        }
 
         // check if string is valid UTF-8
         if (!utf8::is_valid(json)) {
