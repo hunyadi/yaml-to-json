@@ -1,8 +1,7 @@
 .PHONY: all
 all: dist/yaml_to_json_array.sql dist/yaml_to_json_string.sql
 
-EXCEPTION_CATCHING_ALLOWED = transform
-EXPORTED_FUNCTIONS = _string_create,_string_delete,_string_data,_string_length,_transform
+EXPORTED_FUNCTIONS = _main,_string_create,_string_delete,_string_data,_string_length,_transform
 
 EXPORTED_RUNTIME_FOR_ARRAY = HEAPU8
 EXPORTED_RUNTIME_FOR_STRING = stringToUTF8,UTF8ToString,lengthBytesUTF8
@@ -11,27 +10,25 @@ CXX_HEADERS = src/ryml_all.hpp src/string.hpp src/utf8.hpp
 CXX_SOURCES = src/ryml_all.cpp src/yaml_to_json.cpp
 
 dist/yaml_to_json_array.js: src/wrapper/array.js ${CXX_SOURCES} ${CXX_HEADERS}
-	em++ -Oz -fexceptions -flto --no-entry \
+	em++ -Oz -flto \
 		-D NDEBUG \
-		-D RYML_DEFAULT_CALLBACK_USES_EXCEPTIONS \
+		-D RYML_NO_DEFAULT_CALLBACKS \
 		-s STRICT \
-		-s EXCEPTION_CATCHING_ALLOWED=${EXCEPTION_CATCHING_ALLOWED} \
 		-s EXPORTED_FUNCTIONS=${EXPORTED_FUNCTIONS} \
 		-s EXPORTED_RUNTIME_METHODS=${EXPORTED_RUNTIME_FOR_ARRAY} \
-		-s FILESYSTEM=0 -s WASM=1 -s WASM_ASYNC_COMPILATION=0 -s SINGLE_FILE=1 \
+		-s FILESYSTEM=0 -s IGNORE_MISSING_MAIN=0 -s WASM=1 -s WASM_ASYNC_COMPILATION=0 -s SINGLE_FILE=1 \
 		-o $@ \
 		--post-js $< \
 		${CXX_SOURCES}
 
 dist/yaml_to_json_string.js: src/wrapper/string.js ${CXX_SOURCES} ${CXX_HEADERS}
-	em++ -Oz -fexceptions -flto --no-entry \
+	em++ -Oz -flto \
 		-D NDEBUG \
-		-D RYML_DEFAULT_CALLBACK_USES_EXCEPTIONS \
+		-D RYML_NO_DEFAULT_CALLBACKS \
 		-s STRICT \
-		-s EXCEPTION_CATCHING_ALLOWED=${EXCEPTION_CATCHING_ALLOWED} \
 		-s EXPORTED_FUNCTIONS=${EXPORTED_FUNCTIONS} \
 		-s EXPORTED_RUNTIME_METHODS=${EXPORTED_RUNTIME_FOR_STRING} \
-		-s FILESYSTEM=0 -s WASM=1 -s WASM_ASYNC_COMPILATION=0 -s SINGLE_FILE=1 \
+		-s FILESYSTEM=0 -s IGNORE_MISSING_MAIN=0 -s WASM=1 -s WASM_ASYNC_COMPILATION=0 -s SINGLE_FILE=1 \
 		-o $@ \
 		--post-js $< \
 		${CXX_SOURCES}
