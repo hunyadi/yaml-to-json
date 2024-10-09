@@ -17,44 +17,16 @@ static void parser_free(void* mem, size_t size, void* user_data)
 
 static void parser_raise(const char* msg, size_t msg_len, ryml::Location location, void* user_data)
 {
-    longjmp(parse_error_handler, 0);
+    longjmp(parse_error_handler, 1);
 }
 
 extern "C"
 {
-    String* string_create(std::size_t length);
-
-    void string_delete(String* str);
-
-    char* string_data(String* str);
-
-    std::size_t string_length(String* str);
-
     /** An identity transform for testing purposes. */
     String* identity(String* in_str);
 
     /** Converts a YAML string into a JSON string. */
-    String* transform(String* in_str);
-}
-
-String* string_create(std::size_t length)
-{
-    return new String(length);
-}
-
-void string_delete(String* str)
-{
-    delete str;
-}
-
-char* string_data(String* str)
-{
-    return str->data();
-}
-
-std::size_t string_length(String* str)
-{
-    return str->size();
+    String* transform_yaml(String* in_str);
 }
 
 /** An identity transform for testing purposes. */
@@ -66,7 +38,7 @@ String* identity(String* in_str)
 }
 
 /** Converts a YAML string into a JSON string. */
-String* transform(String* in_str)
+String* transform_yaml(String* in_str)
 {
     char* s = in_str->data();
 
@@ -75,8 +47,7 @@ String* transform(String* in_str)
         s += 3;
     }
 
-    if (setjmp(parse_error_handler))
-    {
+    if (setjmp(parse_error_handler)) {
         return nullptr;
     }
 
@@ -92,9 +63,7 @@ String* transform(String* in_str)
     }
 
     // construct result
-    String* out_str = new String(json.size());
-    out_str->assign(json.data(), json.size());
-    return out_str;
+    return new String(json.data(), json.size());
 }
 
 int main(int argc, const char* argv[])

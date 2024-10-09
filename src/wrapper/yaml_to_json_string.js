@@ -11,7 +11,7 @@ function yaml_to_json_string(yaml) {
         const yaml_buffer = _string_data(yaml_string);
         stringToUTF8(yaml, yaml_buffer, yaml_length + 1);
 
-        const json_string = _transform(yaml_string);
+        const json_string = _transform_yaml(yaml_string);
         if (!json_string) {
             return null;
         }

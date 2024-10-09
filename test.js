@@ -1,6 +1,16 @@
+const { check_yaml } = require('./dist/check_yaml.js');
 const { yaml_to_json_array } = require('./dist/yaml_to_json_array.js');
 const { yaml_to_json_string } = require('./dist/yaml_to_json_string.js');
 const { atob } = require('./src/base64.js')
+
+function check_yaml_string(yaml) {
+  const message = check_yaml(new TextEncoder("utf-8").encode(yaml));
+  if (message) {
+    return new TextDecoder("utf-8").decode(message);
+  } else {
+    return null;
+  }
+}
 
 // "árvíztűrő türökfúrógép" stored as UTF-8, prints with multi-byte characters
 console.log(
@@ -13,10 +23,16 @@ console.log(
 );
 
 // a simple YAML string
+console.log(check_yaml_string('{foo: 1, bar: [2, 3], john: doe}'));
 console.log(yaml_to_json_string('{foo: 1, bar: [2, 3], john: doe}'));
 
 // an invalid YAML string
-console.log(yaml_to_json_string('{}0'));
+console.log(check_yaml_string('{}{}'));
+console.log(yaml_to_json_string('{}{}'));
+
+// a YAML string with wrong encoding
+console.log(check_yaml_string(String.raw`"\x97"`));
+console.log(yaml_to_json_string(String.raw`"\x97"`));
 
 // a complex YAML string
 const yaml = String.raw`

@@ -9,7 +9,7 @@ function yaml_to_json_array(yaml) {
     try {
         const yaml_buffer = _string_data(yaml_string);
         Module.HEAPU8.set(yaml, yaml_buffer);
-        const json_string = _transform(yaml_string);
+        const json_string = _transform_yaml(yaml_string);
         if (!json_string) {
             return null;
         }

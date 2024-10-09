@@ -1,15 +1,32 @@
 #pragma once
 #include <cstddef>
+#include <cstring>
 
 /** A fixed-length string that facilitates data interchange over a C interface. */
 struct String
 {
+    /** Creates a string with the given content. */
+    String(const char* data)
+        : _length(std::strlen(data))
+    {
+        _chars = new char[_length + 1];
+        set(data, _length);
+    }
+
+    /** Creates a string with the given content. */
+    String(const char* data, std::size_t length)
+        : _length(length)
+    {
+        _chars = new char[length + 1];
+        set(data, length);
+    }
+
     /** Creates a string with uninitialized content. */
     explicit String(std::size_t length)
+        : _length(length)
     {
         _chars = new char[length + 1];
         _chars[length] = 0;
-        _length = length;
     }
 
     /** Deallocates a string. */
@@ -51,7 +68,14 @@ struct String
     /** Populates the string with data. */
     void assign(const char* data, std::size_t size)
     {
-        memcpy(_chars, data, std::min(_length, size));
+        set(data, size < _length ? size : _length);
+    }
+
+private:
+    /** Populates the string with data. */
+    void set(const char* data, std::size_t size)
+    {
+        memcpy(_chars, data, size);
         _chars[size] = 0;  // NUL terminator
     }
 
