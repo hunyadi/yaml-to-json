@@ -9,7 +9,7 @@ EXPORTED_RUNTIME_FOR_ARRAY = HEAPU8
 EXPORTED_RUNTIME_FOR_STRING = stringToUTF8,UTF8ToString,lengthBytesUTF8
 
 CXX_HEADERS = src/ryml_all.hpp src/string.hpp src/utf8.hpp
-CXX_SOURCES = src/ryml_all.cpp src/string.cpp
+CXX_SOURCES = src/ryml_all.cpp src/string.cpp src/utf8.cpp
 CHECK_SOURCES = ${CXX_SOURCES} src/check_yaml.cpp
 CONVERT_SOURCES = ${CXX_SOURCES} src/yaml_to_json.cpp
 

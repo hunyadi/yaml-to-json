@@ -31,8 +31,8 @@ console.log(check_yaml_string('{}{}'));
 console.log(yaml_to_json_string('{}{}'));
 
 // a YAML string with wrong encoding
-console.log(check_yaml_string(String.raw`"\x97"`));
-console.log(yaml_to_json_string(String.raw`"\x97"`));
+console.log(check_yaml_string(String.raw`"árvíztűrő \x97 türökfúrógép"`));
+console.log(yaml_to_json_string(String.raw`"árvíztűrő \x97 türökfúrógép"`));
 
 // a complex YAML string
 const yaml = String.raw`

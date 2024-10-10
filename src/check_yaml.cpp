@@ -4,7 +4,7 @@
 #include <csetjmp>
 
 static std::jmp_buf parse_error_handler;
-static std::string message;
+static std::string error_message;
 
 static void* parser_allocate(size_t len, void* hint, void* user_data)
 {
@@ -18,13 +18,13 @@ static void parser_free(void* mem, size_t size, void* user_data)
 
 static void parser_raise(const char* msg, size_t len, ryml::Location location, void* user_data)
 {
-    constexpr const char* fmt = "%s at line %zu column %zu";
-    int count = std::snprintf(nullptr, 0, fmt, msg, location.line, location.col);
-    if (count > 0) {
-        message.resize(count + 1);
-        std::snprintf(message.data(), message.size(), fmt, msg, location.line, location.col);
+    constexpr const char* fmt = "%s in YAML at line %zu column %zu offset %zu";
+    int count = std::snprintf(nullptr, 0, fmt, msg, location.line, location.col, location.offset);
+    if (count >= 0) {
+        error_message.resize(count + 1);
+        std::snprintf(error_message.data(), error_message.size(), fmt, msg, location.line, location.col, location.offset);
     } else {
-        message.clear();
+        error_message.clear();
     }
 
     longjmp(parse_error_handler, 1);
@@ -34,34 +34,6 @@ extern "C"
 {
     /** Checks whether a YAML string represents a valid YAML document. */
     String* check_yaml(String* in_str);
-}
-
-static bool visit_node(ryml::Tree& tree, ryml::id_type id)
-{
-    if (tree.is_keyval(id)) {
-        if (!utf8::is_valid(tree.key(id).data())) {
-            return false;
-        }
-        if (!utf8::is_valid(tree.val(id).data())) {
-            return false;
-        }
-    } else if (tree.is_val(id)) {
-        if (!utf8::is_valid(tree.val(id).data())) {
-            return false;
-        }
-    } else if (tree.is_container(id)) {
-        if (tree.has_key(id)) {
-            if (!utf8::is_valid(tree.key(id).data())) {
-                return false;
-            }
-        }
-    }
-    for (ryml::id_type ich = tree.first_child(id); ich != ryml::NONE; ich = tree.next_sibling(ich)) {
-        if (!visit_node(tree, ich)) {
-            return false;
-        }
-    }
-    return true;
 }
 
 /** Checks whether a YAML string represents a valid YAML document. */
@@ -75,7 +47,7 @@ String* check_yaml(String* in_str)
     }
 
     if (setjmp(parse_error_handler)) {
-        return new String(message.data(), message.size());
+        return new String(error_message.data(), error_message.size());
     }
 
     // parse YAML
@@ -85,8 +57,16 @@ String* check_yaml(String* in_str)
     std::string json = ryml::emitrs_json<std::string>(tree);
 
     // check if string is valid UTF-8
-    if (!utf8::is_valid(json)) {
-        return new String("invalid UTF-8 sequence in YAML");
+    std::size_t pos;
+    if (!utf8::is_valid(json, pos)) {
+        std::string msg;
+        constexpr const char* fmt = "invalid UTF-8 character in JSON at offset %zu";
+        int count = std::snprintf(nullptr, 0, fmt, pos);
+        if (count >= 0) {
+            msg.resize(count + 1);
+            std::snprintf(msg.data(), msg.size(), fmt, pos);
+        }
+        return new String(msg.data(), msg.size());
     }
 
     return nullptr;

@@ -22,19 +22,8 @@ static void parser_raise(const char* msg, size_t msg_len, ryml::Location locatio
 
 extern "C"
 {
-    /** An identity transform for testing purposes. */
-    String* identity(String* in_str);
-
     /** Converts a YAML string into a JSON string. */
     String* transform_yaml(String* in_str);
-}
-
-/** An identity transform for testing purposes. */
-String* identity(String* in_str)
-{
-    String* out_str = new String(in_str->size());
-    out_str->assign(in_str->data(), in_str->size());
-    return out_str;
 }
 
 /** Converts a YAML string into a JSON string. */
@@ -58,7 +47,8 @@ String* transform_yaml(String* in_str)
     std::string json = ryml::emitrs_json<std::string>(tree);
 
     // check if string is valid UTF-8
-    if (!utf8::is_valid(json)) {
+    std::size_t pos;
+    if (!utf8::is_valid(json, pos)) {
         return nullptr;
     }
 
