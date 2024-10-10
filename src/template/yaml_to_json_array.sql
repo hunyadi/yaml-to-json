@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION
   LANGUAGE JAVASCRIPT
   RETURNS NULL ON NULL INPUT
   IMMUTABLE
-  COMMENT = 'Converts a YAML string to a JSON string.'
+  COMMENT = 'Converts a YAML binary string encoded in UTF-8 to a JSON binary string also encoded in UTF-8.'
 AS
 $$
 @@BASE64_DECODER@@
@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION
   YAML_TO_JSON(YAML_STRING VARCHAR)
   RETURNS VARIANT
   LANGUAGE SQL
+  COMMENT = 'Parses a YAML string into a semi-structured value.'
 AS
 $$
   PARSE_JSON(TO_VARCHAR(YAML_TO_JSON_ARRAY(TO_BINARY(YAML_STRING, 'UTF-8')), 'UTF-8'))
