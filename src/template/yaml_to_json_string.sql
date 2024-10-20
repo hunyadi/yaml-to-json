@@ -1,3 +1,9 @@
+--
+-- Converts YAML to JSON with Wasm.
+--
+-- Copyright 2024, Levente Hunyadi
+-- https://github.com/hunyadi/yaml-to-json
+
 CREATE OR REPLACE FUNCTION
   YAML_TO_JSON_STRING(YAML_STRING VARCHAR)
   RETURNS VARCHAR

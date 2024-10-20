@@ -1,3 +1,11 @@
+/**
+ * Convert YAML to JSON with Wasm
+ *
+ * Copyright 2024, Levente Hunyadi
+ *
+ * @see https://github.com/hunyadi/yaml-to-json
+**/
+
 #include "ryml_all.hpp"
 #include "string.hpp"
 #include "utf8.hpp"

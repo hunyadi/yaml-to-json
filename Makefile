@@ -1,3 +1,9 @@
+#
+# Convert YAML to JSON with Wasm
+#
+# Copyright 2024, Levente Hunyadi
+# https://github.com/hunyadi/yaml-to-json
+
 .PHONY: all
 all: dist/check_yaml.sql dist/yaml_to_json_array.sql dist/yaml_to_json_string.sql
 

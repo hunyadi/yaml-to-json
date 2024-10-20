@@ -1,5 +1,6 @@
 /**
  * UTF-8 string validation
+ *
  * @see https://github.com/c-util/c-utf8
 **/
 

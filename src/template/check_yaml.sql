@@ -1,3 +1,9 @@
+--
+-- Parses and validates YAML with Wasm.
+--
+-- Copyright 2024, Levente Hunyadi
+-- https://github.com/hunyadi/yaml-to-json
+
 CREATE OR REPLACE FUNCTION
   CHECK_YAML_ARRAY(YAML_ARRAY BINARY)
   RETURNS BINARY
