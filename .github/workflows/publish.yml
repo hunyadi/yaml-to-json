@@ -1,0 +1,63 @@
+name: 📦 JavaScript UDF for YAML to JSON
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish-to-github:
+        type: boolean
+        description: 'Publish to GitHub'
+        required: true
+        default: false
+
+jobs:
+  build-linux:
+    name: 🧱 [Linux] Build and store distribution
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up emsdk and install the latest version of Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+      - name: Set up Python
+        uses: actions/setup-python@v5
+      - name: Build YAML to JSON JavaScript UDF
+        run: |
+          make all
+      - name: Store the distribution package
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist/*.sql
+          retention-days: 1
+          compression-level: 9
+
+  github-release:
+    name: >-
+      🪧 GitHub Release signed with Sigstore
+    if: ${{ inputs.publish-to-github }}
+    needs:
+      - build-linux
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # IMPORTANT: mandatory for making GitHub Releases
+      id-token: write  # IMPORTANT: mandatory for sigstore
+
+    steps:
+    - name: Download the distribution
+      uses: actions/download-artifact@v4
+      with:
+        path: dist/
+        merge-multiple: true
+    - name: Sign the distribution with Sigstore
+      uses: sigstore/gh-action-sigstore-python@v3.0.0
+      with:
+        inputs: >-
+          ./dist/*.sql
+    - name: Upload artifact signatures to GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      # Upload to GitHub Release using the `gh` CLI.
+      # `dist/` contains the built packages, and the
+      # sigstore-produced signatures and certificates.
+      run: >-
+        gh release create `date -I` dist/** --repo '${{ github.repository }}' --notes ''
